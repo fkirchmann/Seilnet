@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<title>{% block title %}{{ i18n("strings", "seilnet") }}{% endblock %}</title>
+	
+	<link href="{{ pathprefix }}/static/css/font-awesome.min.css" rel="stylesheet">
+	<link href="{{ pathprefix }}/static/css/bootstrap.min.css" rel="stylesheet">
+	<link href="{{ pathprefix }}/static/css/global.css" rel="stylesheet">
+	{% block head %}{% endblock %}
+	{% block navbar_css %}{% endblock %}
+	{% block additional_css %}{% endblock %}
+</head>
+<body>
+<div class="container">
+{% block menu %}{% endblock %}
+{% block contentheader %}{% endblock %}
+{% block content %}{% endblock %}
+</div>
+
+<script src="{{ pathprefix }}/static/js/jquery-2.1.4.min.js"></script>
+<script src="{{ pathprefix }}/static/js/bootstrap.min.js"></script>
+{% block navbar_js %}{% endblock %}
+{% block additional_js %}{% endblock %}
+</body>
+</html>

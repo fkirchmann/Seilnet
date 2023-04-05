@@ -1,0 +1,354 @@
+{% extends "admin/extend/main+adminmenu" %}
+{% import "import/editable" %}
+{% import "import/simple_confirmation" %}
+
+{% block title %}{{ i18n("strings", title is null ? "error" : title, titleParam) }} - {{ i18n("strings", "seilnetAdmin") }}{% endblock %}
+
+
+{% block additional_css %}
+{{ editable_css(pathprefix) }}
+<style>
+table th tr {
+    width: auto !important;
+}
+</style>
+{% endblock %}
+
+{% block additional_js %}
+{{ editable_js(pathprefix) }}
+<script src="{{ pathprefix }}/static/js/bootstrap-show-password.min.js"></script>
+<script>
+$.fn.editable.defaults.mode = 'inline';
+$.fn.editable.defaults.url = '#';
+$.fn.editable.defaults.send = 'always';
+$.fn.editable.defaults.type = 'text';
+$.fn.editable.defaults.emptytext = '{{ i18n("strings", "notSpecified") }}';
+
+$(document).ready(function() {
+	$('#firstName').editable();
+	$('#lastName').editable();
+	$('#email').editable();
+	$('#phone').editable();
+	$('#birthday').editable();
+	$('#matriculationNumber').editable();
+	$('#timUsername').editable();
+	
+	{% if roomInfoType is not null %}
+		$('#leaseExpiration').editable();
+	{% endif %}
+	{% if subTenantInfo is iterable %}
+		$('#subLeaseExpiration').editable();
+	{% endif %}
+
+	$('#comments').editable();
+
+    // For devices we use a class instead of an id
+    // (id's are defined as unique in the HTML standard)
+    // Reason: for deviceName, there can be multiple devices and thus multiple editables
+	$('.a-editable').editable();
+});
+</script>
+{% endblock %}
+
+{% block content %}
+{% if title is not null %}
+
+<h2>{{ i18n("strings", title, titleParam) }}</h2>
+
+<div class="table-responsive">
+<table class="table table-striped">
+	<tr>
+		<td>
+			{{ i18n("strings", "status") }}
+		</td>
+		<td>
+			<form action="?" class="form-inline" method="post">
+				<input type="hidden" name="doForm" value="toggleEnabled">
+				<button type="submit" id="submit" class="btn btn-{{ statusButtonClass }}">{{ i18n("strings", status) }}</button>
+			</form>
+		</td>
+	</tr>
+	<tr>
+		<td class="col-md-2">
+			{{ i18n("strings", "fullName") }}
+		</td>
+		<td class="col-md-10">
+			<a href="#" id="firstName">{{ firstName }}</a>
+			<a href="#" id="lastName">{{ lastName }}</a>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			{{ i18n("strings", "email") }}
+		</td>
+		<td>
+			<a href="#" id="email">{{ email }}</a>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			{{ i18n("strings", "phone") }}
+		</td>
+		<td>
+			<a href="#" id="phone">{{ phone }}</a>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			{{ i18n("strings", "birthday") }}
+		</td>
+		<td>
+			<a href="#" id="birthday">{{ birthday }}</a>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			{{ i18n("strings", "matriculationNumber") }}
+		</td>
+		<td>
+			<a href="#" id="matriculationNumber">{{ matriculationNumber }}</a>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			{{ i18n("strings", "timUsername") }}
+		</td>
+		<td>
+			<a href="#" id="timUsername">{{ timUsername }}</a>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			{{ i18n("strings", "room") }}
+		</td>
+		<td>
+			{% if roomInfoType is not null %}
+				{{ i18n("strings", roomInfoType, roomInfo) | raw }}
+				{% if subTenantInfo is iterable %}
+					<br>
+					{{ i18n("strings", "subTenantInfo", subTenantInfo) | raw }}
+				{% else %}
+					{{ simple_confirmation_btn(showForm, "fa-trash", i18n("strings", "removeLease"), "endLease") }}
+				{% endif %}
+			{% else %}
+				{% if showForm == "createLease" %}
+					<form action="?" class="form-inline" method="post">
+						<input type="text" class="form-control" style="width: 100px;" name="roomNr" placeholder="{{ i18n("strings", "room") }}">
+						<select class="form-control" name="subtenant">
+							<option value="false">{{ i18n("strings", "mainTenant") }}</option>
+							<option value="true">{{ i18n("strings", "subTenant") }}</option>
+						</select>
+						<div class="form-group">
+							<label for="leaseExpiration">{{ i18n("strings", "until") }}</label>
+							<input type="text" class="form-control" style="width: 130px;" name="leaseExpiration" placeholder="DD.MM.YYYY">
+						</div>
+						<input type="hidden" name="doForm" value="createLease">
+						<button type="submit" class="btn btn-default"><i class="fa fa-check"></i></button>
+						<a href="?" class="btn btn-default"><i class="fa fa-times"></i></a>
+					</form>
+				{% else %}
+					{{ i18n("strings", "noActiveLease") }}
+					<a href="?showForm=createLease" class="btn btn-default btn-sm"><i class="fa fa-plus"></i></a>
+				{% endif %}
+			{% endif %}
+		</td>
+	</tr>
+	<tr>
+		<td>
+			{{ i18n("strings", "ipAddress") }}
+		</td>
+		<td>
+		    {% if roomInfoType is not null %}
+		        {{ i18n("strings", "vlan") }} {{ vlan }} &nbsp;
+			{% endif %}
+
+			{% if ipAddress is not null %}
+				IP: {{ ipAddress }}
+			{% else %}
+				-
+			{% endif %}
+
+			{% if roomInfoType is not null %}
+				{{ simple_confirmation_btn(showForm, "fa-refresh", i18n("strings", "confirmNewIP"), "newNatIPv4") }}
+			{% endif %}
+
+            <div style="display: inline-block">
+                <form action="?" class="form-inline" method="post">
+                    <input type="hidden" name="doForm" value="toggleDynamicIPv4">
+                    &nbsp; {{ i18n("strings", "dynamic") }}:
+                    <button type="submit" id="submit" class="btn btn-sm btn-{{ dynamicIP ? "success" : "danger" }}">
+                        <i class="fa fa-toggle-{{ dynamicIP ? "on" : "off" }}"></i>
+                    </button>
+                </form>
+            </div>
+            <div style="display: inline-block">
+                <form action="?" class="form-inline" method="post">
+                    <input type="hidden" name="doForm" value="toggleAdblock">
+                    &nbsp; {{ i18n("strings", "adblockShort") }}:
+                    <button type="submit" id="submit" class="btn btn-sm btn-{{ adblock ? "success" : "danger" }}">
+                        <i class="fa fa-toggle-{{ adblock ? "on" : "off" }}"></i>
+                    </button>
+                </form>
+            </div>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			{{ i18n("strings", "wlanPassword") }}
+		</td>
+		<td>
+			<form action="?" class="form-inline" method="post">
+				{% if wlanPassword is not null %}
+					<div style="display: inline-block; max-width: 20em;">
+						<input id="wlanPassword" class="form-control" type="password" data-toggle="password" value="{{ wlanPassword }}" readonly>
+					</div>
+				{% endif %}
+				{{ simple_confirmation_btn(showForm, "fa-refresh", i18n("strings", "confirmNewWlanPassword"), "newWlanPassword", "", "") }}
+				{% if wlanPassword is not null %}
+				    <a href="{{ printWifiLink }}" class="btn btn-default" target="_blank"><i class="fa fa-print"></i></a>
+				{% endif %}
+			</form>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			{{ i18n("strings", "comments") }}
+		</td>
+		<td>
+			<a href="#" id="comments" data-type="textarea">{{ comments }}</a>
+		</td>
+	</tr>
+</table>
+</div>
+
+<h3>{{ i18n("strings", "assignedDevices") }}
+{% if assignedDevices is not empty %}
+	<a href="{{ printDevicesLink }}" class="btn btn-default" target="_blank"><i class="fa fa-print"></i></a>
+{% endif %}
+</h3>
+
+<div class="table-responsive">
+<table class="table table-striped">
+	<tr>
+		<th>
+			{{ i18n("strings", "deviceName") }}
+		</th>
+		<th>
+			{{ i18n("strings", "macAddress") }}
+		</th>
+		<th>
+			{{ i18n("strings", "assignedSince") }}
+		</th>
+		<th>
+		</th>
+	</tr>
+	{% for device in assignedDevices %}
+		<tr>
+			<td>
+				<a href="#" class="a-editable" data-name="deviceName" data-pk="{{ device.id }}">{{ device.name }}</a>
+			</td>
+			<td>
+				{{ device.macAddress }}
+			</td>
+			<td>
+				{{ objectToString(device.assignedFrom) }}
+			</td>
+			<td>
+				{{ simple_confirmation_btn(showForm, "fa-trash", i18n("strings", "removeDevice"), "removeDevice", device.id) }}
+			</td>
+		</tr>
+	{% endfor %}
+	<tr>
+		<form id="addDeviceForm" method="post" class="form-inline">
+			<input type="hidden" name="doForm" value="addDevice">
+			<td>
+				<input type="text" class="form-control" name="name" placeholder="{{ i18n("strings", "deviceName") }}"
+				data-fv-notempty="true">
+			</td>
+			<td>
+				<input type="text" class="form-control" name="macAddress" placeholder="{{ i18n("strings", "macAddress") }}"
+				data-fv-mac="true"
+				data-fv-notempty="true">
+			</td>
+			<td colspan="2">
+				<button type="submit" class="btn btn-default"><i class="fa fa-plus"></i></button>
+			</td>
+		</form>
+	</tr>
+</table>
+</div>
+
+{% if unregisteredDevices is not empty %}
+	<h3>{{ i18n("strings", "unregisteredDevices") }}</h3>
+	<div class="table-responsive">
+	<table class="table table-striped">
+		<tr>
+			<th>
+				{{ i18n("strings", "deviceName") }}
+			</th>
+			<th colspan="2">
+				{{ i18n("strings", "macAddress") }}
+			</th>
+		</tr>
+		{% for device in unregisteredDevices %}
+			<tr>
+				<td>
+					{{ device.name }}
+				</td>
+				<td>
+					{{ device.macAddress }}
+				</td>
+				<td>
+					<form method="post" class="form-inline">
+						<input type="hidden" name="doForm" value="addDevice">
+						<input type="hidden" name="name" value="{{ device.name }}">
+						<input type="hidden" name="macAddress" value="{{ device.macAddress }}">
+						<button type="submit" class="btn btn-default"><i class="fa fa-plus"></i></button>
+					</form>
+				</td>
+			</tr>
+		{% endfor %}
+	</table>
+	</div>
+{% endif %}
+
+{% if previousDevices is not empty %}
+	<h3>{{ i18n("strings", "previousDevices") }}</h3>
+	<div class="table-responsive">
+	<table class="table table-striped">
+		<tr>
+			<th>
+				{{ i18n("strings", "deviceName") }}
+			</th>
+			<th>
+				{{ i18n("strings", "macAddress") }}
+			</th>
+			<th>
+				{{ i18n("strings", "assignedFrom") }}
+			</th>
+			<th>
+				{{ i18n("strings", "assignedTo") }}
+			</th>
+		</tr>
+		{% for device in previousDevices %}
+			<tr>
+				<td>
+					{{ device.name }}
+				</td>
+				<td>
+					{{ device.macAddress }}
+				</td>
+				<td>
+					{{ objectToString(device.assignedFrom) }}
+				</td>
+				<td>
+					{{ objectToString(device.assignedTo) }}
+				</td>
+			</tr>
+		{% endfor %}
+	</table>
+	</div>
+{% endif %}
+
+{% endif %}
+{% endblock %}

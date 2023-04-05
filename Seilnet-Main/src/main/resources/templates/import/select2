@@ -1,0 +1,10 @@
+{% macro select2_js(pathprefix) %}
+<script src="{{ pathprefix }}/static/js/select2.min.js"></script>
+<script src="{{ pathprefix }}/static/js/select2-en.js"></script>
+<script src="{{ pathprefix }}/static/js/select2-de.js"></script>
+{% endmacro %}
+
+{% macro select2_css(pathprefix) %}
+<link href="{{ pathprefix }}/static/css/select2.min.css" rel="stylesheet">
+<link href="{{ pathprefix }}/static/css/select2-bootstrap.min.css" rel="stylesheet">
+{% endmacro %}

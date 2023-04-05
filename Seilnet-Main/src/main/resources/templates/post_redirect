@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+	<meta charset="utf-8">
+	<title>{{ i18n("strings", "redirect") }}</title>
+</head>
+<body>
+    <form name="redirect" method="post" action="{{ url }}">
+        <button type="submit">{{ i18n("strings", "redirectInProgress") }}</button>
+    </form>
+    <script>
+        window.onload = function() {
+            document.forms['redirect'].submit();
+        };
+    </script>
+</body>
+</html>

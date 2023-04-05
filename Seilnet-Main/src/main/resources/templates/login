@@ -1,0 +1,27 @@
+{% extends "extend/main" %}
+{% import "import/messages" %}
+
+{% block title %}{{ i18n("strings", "loginTitle") }}{% endblock %}
+
+{% block additional_css %}
+<link href="{{ pathprefix }}/static/css/login.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<form class="form-signin" method="post" action="{{ pathprefix }}/login">
+	<h2 class="form-signin-heading">{{ i18n("strings", "loginTitle") }}</h2>
+	
+	{{ show_messages(messages) }}
+	
+	<input name="email" type="email" id="inputEmail" class="form-control form-top" placeholder="{{ i18n("strings", "email") }}" required autofocus>
+	<input name="password" type="password" id="inputPassword" class="form-control form-bottom" placeholder="{{ i18n("strings", "password") }}" required>
+	{# <div class="checkbox">
+		<label>
+			<input type="checkbox" value="remember-me"> Remember me
+		</label>
+	</div> #}
+	<input name="redirect" type="hidden" value="{{ redirect }}">
+	<button class="btn btn-lg btn-primary btn-block" type="submit">{{ i18n("strings", "login") }}</button>
+	<a href="{{ pathprefix }}/reset_request" class="btn btn-default btn-sm btn-block">{{ i18n("strings", "passwordForgotten") }}</a>
+</form>
+{% endblock %}

@@ -1,0 +1,132 @@
+{% extends "extend/main+menu" %}
+{% import "import/select2" %}
+
+{% block title %}{{ i18n("strings", "seilnet") }}{% endblock %}
+
+{% block navtitle %}{{ i18n("strings", "seilnetMail") }}{% endblock %}
+{% block navtitle_sublink %}{{ mail_pathprefix }}/{% endblock %}
+
+{% block additional_css %}
+{{ select2_css(pathprefix) }}
+{% endblock %}
+
+{% block additional_js %}
+{{ select2_js(pathprefix) }}
+<script>
+{# Verhindert, dass eine Email ausversehen mit Enter abgeschickt wird #}
+$(document).on("keypress", ":input:not(textarea)", function(event) {
+    if (event.keyCode == 13) {
+        event.preventDefault();
+    }
+});
+$(document).ready(function() {
+	{# Sorgt dafuer, dass der Abschicken-Button nur geklickt werden kann, wenn
+       das Bestaetigungs-Haekchen gesetzt ist. #}
+	$('#confirm').click(function() {
+		$('#send').prop('disabled', !this.checked);
+	});
+	$('#userRecipients').select2({
+			language: "{{ lang }}",
+			theme: "bootstrap",
+			ajax: {
+				url: "{{ pathprefix }}{{ api_pathprefix }}/user_search",
+				dataType: 'json',
+				delay: 100,
+				data: function (params) {
+					return {
+						searchQuery: params.term
+					};
+				},
+				processResults: function (data) { return {
+					results: data
+				};
+			},
+			cache: true
+		},
+		minimumInputLength: 1,
+    });
+    {% if userRecipients is not empty %}
+		{% for user in userRecipients %}
+			$('#userRecipients').append('<option value="{{ user.id }}" selected="selected">{{ user.fullName }}</option>');
+		{% endfor %}
+	{% endif %}
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<form class="form-horizontal" method="post">
+	<div class="form-group">
+		<label class="col-sm-2 control-label">{{ i18n("strings", "recipientGroups") }}</label>
+		<div class="col-sm-2">
+    		<div class="row">
+				{% for group in databaseGroups %}
+					{% if group.showMailingList %}
+					<div class="col-sm-12">
+						<div class="checkbox form-inline">
+							<label><input type="checkbox" name="group_db_{{ group.id }}" {{ checkedDb[group.id] }}> {{ group.name }}</label>
+						</div>
+					</div>
+					{% endif %}
+				{% endfor %}
+			</div>
+		</div>
+		<div class="col-sm-2">
+    		<div class="row">
+				{% for group in customRecipientGroups %}
+					<div class="col-sm-12">
+						<div class="checkbox form-inline">
+							<label><input type="checkbox" name="group_custom_{{ group.name }}" {{ checkedCustom[group.name] }}> {{ i18n("strings", group.i18nTag) }}</label>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label">{{ i18n("strings", "recipientUsers") }}</label>
+		<div class="col-sm-10">
+			<select style="width: 100%;" id="userRecipients" name="userRecipients" class="form-control"
+				data-placeholder="{{ i18n("strings", "fullNameOrRoomNr") }}" multiple="multiple"></select>
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="replyTo" class="col-sm-2 control-label">{{ i18n("strings", "replyTo") }}</label>
+		<div class="col-sm-10">
+			<select name="replyTo" class="form-control" prompt="{{ i18n("strings", "choiceRequired") }}">
+				<option disabled {{ replyTo == null ? "selected" : "" }}>{{ i18n("strings", "choiceRequired") }}</option>
+				<option value="-2" {{ replyTo == -2 ? "selected" : "" }}>{{ i18n("strings", "noReplyTo") }}</option>
+				<option value="-1" {{ replyTo == -1 ? "selected" : "" }}>{{ user.fullName }} ({{ user.email }})</option>
+				{% for group in senderGroups %}
+					<option value="{{ group.id }}" {{ replyTo == group.id ? "selected" : "" }}>{{ groupPrefix}}{{ group.name }} ({{ group.email }})</option>
+				{% endfor %}
+			</select>
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="subject" class="col-sm-2 control-label">{{ i18n("strings", "subject") }}</label>
+		<div class="col-sm-10">
+			<input type="text" class="form-control" name="subject" placeholder="{{ i18n("strings", "subject") }}" value="{{ subject }}">
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="message" class="col-sm-2 control-label">{{ i18n("strings", "message") }}</label>
+		<div class="col-sm-10">
+			<textarea rows="12" class="form-control" name="messageText" placeholder="{{ i18n("strings", "writeMessageHere") }}">{{ messageText }}</textarea>
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="confirm" class="col-sm-2 control-label">{{ i18n("strings", "confirmation") }}</label>
+		<div class="col-sm-10">
+			<div class="checkbox">
+				<label><input type="checkbox" name="confirm" id="confirm"> {{ i18n("strings", "sendConfirmation") }}</label>
+			</div>
+		</div>
+	</div>
+	<div class="form-group">
+		<div class="col-sm-offset-2 col-sm-10">
+			<button type="submit" class="btn btn-primary" id="send" disabled><i class="fa fa-paper-plane"></i> {{ i18n("strings", "send") }}</button>
+		</div>
+	</div>
+</form>
+{% endblock %}

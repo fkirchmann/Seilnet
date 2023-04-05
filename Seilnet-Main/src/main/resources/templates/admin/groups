@@ -1,0 +1,50 @@
+{% extends "admin/extend/main+adminmenu" %}
+{% import "import/editable" %}
+{% import "import/simple_confirmation" %}
+
+{% block title %}{{ i18n("strings", "usersActive") }} - {{ i18n("strings", "seilnetAdmin") }}{% endblock %}
+
+{% block content %}
+
+<h2>{{ i18n("strings", "groups") }}</h2>
+
+<div class="table-responsive">
+<table class="table table-striped">
+	<tr>
+		<th class="col-md-2" colspan="2">
+			{{ i18n("strings", "group") }}
+		</th>
+		<th class="col-md-10">
+			{{ i18n("strings", "members") }}
+		</th>
+	</tr>
+{% for group in groups %}
+	<tr>
+		<td>
+			<a href="{{ group.link }}">{{ group.name }}</a>
+		</td>
+		<td>
+			{{ simple_confirmation_btn(showForm, "fa-trash", i18n("strings", "deleteGroup"), "deleteGroup", group.id) }}
+		</td>
+		<td>
+			{% if group.members is iterable %}
+				{{ group.members | join(', ') }}
+			{% else %}
+				-
+			{% endif %}
+		</td>
+	</tr>
+{% endfor %}
+	<tr>
+		<form id="addGroupForm" method="post" class="form-inline">
+			<input type="hidden" name="doForm" value="addGroup">
+			<td>
+				<input type="text" class="form-control" name="name" placeholder="{{ i18n("strings", "newGroup") }}">
+			</td>
+			<td colspan="2">
+				<button type="submit" class="btn btn-default"><i class="fa fa-plus"></i></button>
+			</td>
+		</form>
+	</tr>
+</table>
+{% endblock %}

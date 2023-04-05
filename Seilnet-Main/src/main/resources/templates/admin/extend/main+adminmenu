@@ -1,0 +1,69 @@
+{% extends "extend/main+menu" %}
+{% import "import/select2" %}
+
+{% block navbar_css %}
+{{ select2_css(pathprefix) }}
+{% endblock %}
+
+{% block navbar_js %}
+{{ select2_js(pathprefix) }}
+<script>
+$(document).ready(function() {
+	$('#userSearch').select2({
+			language: "{{ lang }}",
+			theme: "bootstrap",
+			multiple: true,
+			ajax: {
+				url: "{{ pathprefix }}{{ api_pathprefix }}/user_search",
+				dataType: 'json',
+				delay: 100,
+				data: function (params) {
+					return {
+						searchQuery: params.term
+					};
+				},
+				processResults: function (data) { return {
+					results: data
+				};
+			},
+			cache: true
+		},
+		minimumInputLength: 1,
+		maximumSelectionLength: 1
+    });
+    $("#userSearch").change(function() {
+         $("#userSearchForm").submit();
+    });
+});
+</script>
+{% endblock %}
+
+{% block title %}{{ i18n("strings", "seilnetAdmin") }}{% endblock %}
+
+{% block navtitle %}{{ i18n("strings", "seilnetAdmin") }}{% endblock %}
+{% block navtitle_sublink %}{{ admin_pathprefix }}/{% endblock %}
+
+{% block modulenav %}
+<ul class="nav navbar-nav">
+	{# <li><a class="active" href="{{ pathprefix }}{{ admin_pathprefix }}/user/2">Link</a></li> #}
+	<li><a href="{{ pathprefix }}{{ admin_pathprefix }}/users/create">{{ i18n("strings", "usersCreate") }}</a></li>
+	<li><a href="{{ pathprefix }}{{ admin_pathprefix }}/active_users">{{ i18n("strings", "usersActive") }}</a></li>
+	<li><a class="active" href="{{ pathprefix }}{{ admin_pathprefix }}/groups">{{ i18n("strings", "usersGroups") }}</a></li>
+	<li class="dropdown">
+		<a class="active dropdown-toggle" data-toggle="dropdown" href="#" role="button">{{ i18n("strings", "tools") }} <span class="caret"></span></a>
+		<ul class="dropdown-menu">
+			<li><a href="{{ pathprefix }}{{ admin_pathprefix }}/birthdays">{{ i18n("strings", "birthdays") }}</a></li>
+			<li><a href="{{ pathprefix }}{{ admin_pathprefix }}/changelog">{{ i18n("strings", "changelog") }}</a></li>
+			{# <li role="separator" class="divider"></li>
+			<li><a href="{{ pathprefix }}{{ admin_pathprefix }}/groups">{{ i18n("strings", "usersGroups") }}</a></li> #}
+		</ul>
+	</li>
+    <form id="userSearchForm" class="navbar-form navbar-left" method="get" action="{{ pathprefix }}{{ admin_pathprefix }}/user">
+        <div class="form-group">
+            <select style="width: 15em" id="userSearch" name="id" class="form-control" data-placeholder="{{ i18n("strings", "fullNameOrRoomNr") }}"></select>
+        </div>
+        <!--- <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button> --->
+    </form>
+</ul>
+
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends "extend/main+menu" %}
+
+{% block title %}{{ i18n("strings", "seilnet") }} {{ i18n("strings", "networkSettings") }}{% endblock %}
+
+{% block navtitle %}{{ i18n("strings", "networkSettings") }}{% endblock %}
+{% block navtitle_sublink %}{{ netsettings_pathprefix }}/{% endblock %}
+
+{% block content %}
+
+<h2>{{ i18n("strings", "networkSettings") }}</h2>
+
+<div class="panel panel-default" style="margin-bottom: 1em;">
+<div class="panel-body">
+    <h3 style="margin-top: 0px;">{{ i18n("strings", "deviceManagement") }}</h3>
+    <p>{{ i18n("strings", "deviceManagementExplanation") }}</p>
+    <p style="margin-bottom: 0px;">
+        {% if not noSelfServiceDeviceRegistration %}
+            <a class="btn btn-primary btn-lg" href="devices/register" role="button">
+                {{ i18n("strings", "registerNewDevice") }}
+            </a>
+        {% endif %}
+        <a class="btn btn-default btn-lg" href="devices/" role="button">
+            {{ i18n("strings", "showRegisteredDevices") }}
+        </a>
+    </p>
+</div></div>
+
+<div class="panel panel-default">
+  <!--- <div class="panel-body">
+    Deine aktuelle IP-Adresse: 1.2.3.4
+  </div> --->
+  <ul class="list-group">
+      <li class="list-group-item">
+        <form action="?" class="form-inline" method="post">
+            <input type="hidden" name="doForm" value="toggleDynamicIPv4">
+            <b>{{ i18n("strings", "dynamicIP") }}: </b> &nbsp;
+            <button type="submit" id="submit" class="btn btn-{{ dynamicIP ? "success" : "danger" }}"
+                style="width: 6em;">
+                <i class="fa fa-toggle-{{ dynamicIP ? "on" : "off" }}"></i> &nbsp;
+                {{ i18n("strings", dynamicIP ? "on" : "off") }}
+            </button>
+        </form>
+      </li>
+  </ul>
+  <div class="panel-footer">
+    {{ i18n("strings", "dynamicIPExplanation", dynamicIPChangeTime) }}
+    {% if oldIPsRetentionDays is not null %}
+        <br><br>
+        {{ i18n("strings", "oldIPsRetentionExplanation", oldIPsRetentionDays) }}
+    {% endif %}
+  </div>
+</div>
+
+
+{% if adblockDNS is not null %}
+    <div class="panel panel-default">
+      <ul class="list-group">
+          <li class="list-group-item">
+            <form action="?" class="form-inline" method="post">
+                <input type="hidden" name="doForm" value="toggleAdblock">
+                <b>{{ i18n("strings", "adblock") }}: </b> &nbsp;
+                <button type="submit" id="submit" class="btn btn-{{ adblock ? "success" : "danger" }}"
+                    style="width: 6em;">
+                    <i class="fa fa-toggle-{{ adblock ? "on" : "off" }}"></i> &nbsp;
+                    {{ i18n("strings", adblock ? "on" : "off") }}
+                </button>
+            </form>
+          </li>
+      </ul>
+      <div class="panel-footer">
+        {{ i18n("strings", "adblockExplanation", adblockDNS) }}
+        <br><br>
+        <b>{{ i18n("strings", "adblockWarning") }}</b>
+      </div>
+    </div>
+{% endif %}
+
+{% endblock %}

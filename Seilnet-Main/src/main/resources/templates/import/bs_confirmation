@@ -1,0 +1,7 @@
+{% macro bs_confirmation_js(pathprefix) %}
+<script src="{{ pathprefix }}/static/js/bootstrap-confirmation.min.js"></script>
+{% endmacro %}
+
+{% macro bs_confirmation_tag() %}
+ data-toggle="confirmation" 
+{% endmacro %}

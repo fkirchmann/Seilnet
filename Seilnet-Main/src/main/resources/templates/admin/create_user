@@ -1,0 +1,142 @@
+{% extends "admin/extend/main+adminmenu" %}
+
+{% block title %}{{ i18n("strings", "usersCreate") }} - {{ i18n("strings", "seilnetAdmin") }}{% endblock %}
+
+{% block additional_css %}
+<link href="{{ pathprefix }}/static/css/intlTelInput.css" rel="stylesheet">
+<link href="{{ pathprefix }}/static/css/intlTelInput-flags.css" rel="stylesheet">
+{% endblock %}
+
+{% block additional_js %}
+<script src="{{ pathprefix }}/static/js/intlTelInput.min.js"></script>
+<script>
+$(document).ready(function() {
+	$('#registrationForm').find('[name="phoneNumber"]').intlTelInput({
+		utilsScript: '{{ pathprefix }}/static/js/libphonenumber-utils.js',
+		autoPlaceholder: true,
+		preferredCountries: ['de']
+	});
+});
+
+{{ tomorrow_date_function() }}
+</script>
+{% endblock %}
+
+{% block content %}
+
+<h2>{{ i18n("strings", "usersCreate") }}</h2>
+
+<form id="registrationForm" method="post" class="form-horizontal">
+	<div class="form-group row">
+		<label class="col-sm-2 control-label">{{ i18n("strings", "fullName") }}</label>
+		<div class="col-sm-4" style="max-width: 280px; padding-right: 5px;">
+			<input autofocus tabindex="1" type="text" class="form-control" name="firstName" value="{{ firstName }}" placeholder="{{ i18n("strings", "firstName") }}"
+				data-fv-row=".col-sm-4"
+				data-fv-notempty="true">
+		</div>
+
+		<div class="col-sm-4" style="max-width: 280px; padding-left: 5px;">
+			<input tabindex="2" type="text" class="form-control" name="lastName" value="{{ lastName }}" placeholder="{{ i18n("strings", "lastName") }}"
+				data-fv-row=".col-sm-4"
+				data-fv-notempty="true" >
+		</div>
+	</div>
+
+	<div class="form-group row">
+		<label class="col-sm-2 control-label">{{ i18n("strings", "email") }}</label>
+		<div class="col-sm-5">
+			<input tabindex="3" type="text" class="form-control" name="email" value="{{ email }}"
+				data-fv-notempty="true"
+				data-fv-emailaddress="true">
+		</div>
+	</div>
+
+	<div class="form-group row">
+		<label for="language" class="col-sm-2 control-label">{{ i18n("strings", "language") }}</label>
+		<div class="col-sm-3">
+			<div class="radio">
+				<label>
+					<input tabindex="4" type="radio" name="language" id="language" value="de-DE" data-fv-notempty="true" {{ language_de_DE }}> {{ i18n("strings", "locale-de-DE") }}
+				</label>
+			</div>
+			<div class="radio">
+				<label>
+					<input type="radio" name="language" id="language" value="en-US" {{ language_en_US }}> {{ i18n("strings", "locale-en-US") }}
+				</label>
+			</div>
+		</div>
+	</div>
+
+	<div class="form-group row">
+		<label for="phoneNumber" class="col-sm-2 control-label">{{ i18n("strings", "phone") }} *</label>
+		<div class="col-sm-3">
+			<input tabindex="5" type="tel" class="form-control" name="phoneNumber" id="phoneNumber" value="{{ phoneNumber }}" placeholder="+49 1512 3456789">
+		</div>
+	</div>
+
+	<div class="form-group row">
+		<label for="birthday" class="col-sm-2 control-label">{{ i18n("strings", "birthday") }}</label>
+		<div class="col-sm-2">
+			<input tabindex="6" type="text" class="form-control" name="birthday" id="birthday" value="{{ birthday }}" placeholder="DD.MM.YYYY"
+				data-fv-notempty="true"
+				data-fv-date="true"
+				data-fv-date-format="DD.MM.YYYY"
+				data-fv-date-max="tomorrowDate">
+		</div>
+	</div>
+
+	<div class="form-group row">
+        <label for="matriculationNumber" class="col-sm-2 control-label">{{ i18n("strings", "matriculationNumber") }} *</label>
+        <div class="col-sm-2">
+            <input tabindex="7" type="text" class="form-control" name="matriculationNumber" id="matriculationNumber" value="{{ matriculationNumber }}" placeholder="123456"
+                data-fv-digits="true">
+        </div>
+    </div>
+
+	<div class="form-group row">
+		<label for="roomNr" class="col-sm-2 control-label">{{ i18n("strings", "room") }}</label>
+		<div class="col-sm-2">
+			<input tabindex="8" type="text" class="form-control" name="roomNr" id="roomNr" value="{{ roomNr }}" placeholder="{{ i18n("strings", "roomNr") }}"
+				data-fv-notempty="true"
+				data-fv-digits="true"
+				data-fv-greaterthan="true"
+				data-fv-greaterthan-value="1000"
+				data-fv-lessthan="true"
+				data-fv-lessthan-value="1500">
+		</div>
+	</div> 
+	
+	<div class="form-group row">
+		<label for="subtenant"  class="col-sm-2 control-label">{{ i18n("strings", "leaseType") }}</label>
+		<div class="col-sm-2">
+			<div class="radio">
+				<label>
+					<input tabindex="9" type="radio" name="subtenant" value="false" data-fv-notempty="true" {{ subtenant_false }}> {{ i18n("strings", "mainTenant") }}
+				</label>
+			</div>
+			<div class="radio">
+				<label>
+					<input type="radio" name="subtenant" value="true" {{ subtenant_true }}> {{ i18n("strings", "subTenant") }}
+				</label>
+			</div>
+		</div>
+	</div>
+
+	<div class="form-group row">
+		<label for="leaseExpiration" class="col-sm-2 control-label">{{ i18n("strings", "leaseExpiration") }}</label>
+		<div class="col-sm-2">
+			<input tabindex="10" type="text" class="form-control" name="leaseExpiration" value="{{ leaseExpiration }}" placeholder="DD.MM.YYYY"
+				data-fv-date="true"
+				data-fv-date-format="DD.MM.YYYY"
+				data-fv-date-min="tomorrowDate">
+		</div>
+	</div>
+
+	<div class="form-group row">
+		<div class="col-sm-9 col-sm-offset-2">
+			<button tabindex="11" type="submit" class="btn btn-primary">{{ i18n("strings", "usersCreate") }}</button>
+		</div>
+	</div>
+</form>
+
+{% endblock %}

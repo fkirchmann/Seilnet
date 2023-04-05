@@ -1,0 +1,46 @@
+{% extends "admin/extend/main+adminmenu" %}
+{% import "import/editable" %}
+
+{% block title %}{{ i18n("strings", "usersActive") }} - {{ i18n("strings", "seilnetAdmin") }}{% endblock %}
+
+{% block content %}
+
+<h2>{{ i18n("strings", "usersActive") }}</h2>
+
+
+<div class="table-responsive">
+<table class="table table-striped">
+	<tr>
+		<th class="col-md-1">
+			{{ i18n("strings", "room") }}
+		</th>
+		<th class="col-md-1">
+            {{ i18n("strings", "vlan") }}
+        </th>
+		<th class="col-md-10">
+			{{ i18n("strings", "fullName") }}
+		</th>
+	</tr>
+{% for room in rooms %}
+	<tr>
+		<td>
+			{{ room.number }}
+		</td>
+		<td>
+			{{ room.vlan }}
+		</td>
+		<td>
+			{% if room.occupied %}
+				<a href="{{ room.userLink }}">{{ room.userFullName }}</a>
+			    {% if room.mainTenantFullName is not null %}
+			        ({{ i18n("strings", "subtenantOf") }}
+			        <a href="{{ room.mainTenantLink }}">{{ room.mainTenantFullName }}</a>)
+			    {% endif %}
+			{% else %}
+				-
+			{% endif %}
+		</td>
+	</tr>
+{% endfor %}
+</table
+{% endblock %}

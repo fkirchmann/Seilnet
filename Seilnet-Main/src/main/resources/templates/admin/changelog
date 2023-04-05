@@ -1,0 +1,61 @@
+{% extends "admin/extend/main+adminmenu" %}
+
+{% block title %}{{ i18n("strings", "changelog") }} - {{ i18n("strings", "seilnetAdmin") }}{% endblock %}
+
+{% block content %}
+
+<h2>Changelog</h2>
+
+<hr> <h4>02.09.2021</h4>
+Änderungen von Felix Kirchmann:
+<ul>
+    <li>REST-API für FreeRADIUS-Server angepasst, damit auch EAP-PWD funktioniert.</li>
+    <li>Neue WLAN-Passwörter sind jetzt 12 (statt 10) Zeichen lang und damit deutlich schwerer zu knacken (>2000 Jahre auf 10 * RTX 3090)</li>
+    <li>Die WLAN-Passwort-Resetfunktion im Admininterface funktioniert jetzt.</li>
+</ul>
+
+<hr> <h4>22.12.2020</h4>
+Änderungen von Felix Kirchmann:
+<ul>
+    <li>Man kann jetzt endlich selbst seine Geräte registrieren!</li>
+    <li>Wahrscheinlich wird das hier sowas wie mein Abschiedsgeschenk ans Wohnheim sein. Ist schon krass, wie schnell die Zeit vergeht...</li>
+    <li>Das Adminpanel zeigt jetzt ein zufälliges Bild an statt dem letzten.</li>
+</ul>
+
+<hr> <h4>9.11.2018</h4>
+Änderungen von Felix Kirchmann:
+<ul>
+    <li>Radius-Rest-API erweitert: ermöglicht Zimmer-WLANs zusammen mit UniFi MAC-Based RADIUS Authentication</li>
+</ul>
+
+<hr> <h4>23.10.2018</h4>
+Änderungen von Felix Kirchmann:
+<ul>
+    <li>User-einschaltbarer Werbeblocker: leitet DNS-Requests um wenn eingeschaltet (bspw. auf eine PiHole-Instanz)</li>
+</ul>
+
+<hr> <h4>17.10.2018</h4>
+Änderungen von Felix Kirchmann:
+<ul>
+    <li>Kalender (Bar, Medienraum, Garten) integriert</li>
+</ul>
+
+<hr> <h4>05.10.2018</h4>
+Änderungen von Felix Kirchmann:
+<ul>
+    <li>Dynamische IP-Adressen</li>
+    <li>Suche nach Nutzernamen und Zimmernummern</li>
+    <li>Anzeige von Zimmer-VLANs</li>
+    <li>Rate Limiting für Loginversuche und Passwortresetemails</li>
+    <li>Aufteilung der Admin-Berechtigung in Admin (Webinterface), Adminnetz und Internet ohne Geräteregistrierung</li>
+    <li>Bugfix: Race Condition zwischen dnsmasq und DnsmasqDhcpHostMonitor behoben (Nutzer-Geräte mit DHCP-IP sollten jetzt immer angezeigt werden)</li>
+    <li>Bei Webinterface-Logins wird jetzt in der Tabelle Authentication_Events die User-IP und nicht mehr die IP des Reverse-Webproxys geloggt</li>
+    <li>Externes Modul Schlüsselverwaltung angebunden</li>
+    <li>Es gibt jetzt einen Changelog!</li>
+</ul>
+
+<hr> <h4>Erste Versionen (06.09.2016 - 26.11.2017)</h4>
+Von Felix programmiert (mit Dank an Thomas für Hilfe bei den Ausdruckformularen)
+<br>... damals leider noch kein Changelog
+
+{% endblock %}

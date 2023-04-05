@@ -1,0 +1,20 @@
+{% macro simple_confirmation_btn(showForm, btnSymbol, prompt, formID, id = "", btnType = "btn-sm") %}
+	{% set uniqueFormIdentifier = concat2(formID, objectToString(id)) %}
+	{% if showForm == uniqueFormIdentifier %}
+		<div class="well well-sm inline-box">
+			<form action="?" class="form-inline" method="post">
+				<input type="hidden" name="doForm" value="{{ formID }}">
+				{% if id is not null %}
+					<input type="hidden" name="id" value="{{ id }}">
+				{% endif %}
+				<div class="form-group">
+					<label>{{ prompt }}</label>
+					<button type="submit" id="submit" class="btn btn-default"><i class="fa fa-check"></i></button>
+				</div>
+				<a href="?" class="btn btn-default"><i class="fa fa-times"></i></a>
+			</form>
+		</div>
+	{% else %}
+		<a href="?showForm={{ uniqueFormIdentifier }}" class="btn btn-default {{ btnType }}"><i class="fa {{ btnSymbol }}"></i></a>
+	{% endif %}
+{% endmacro %}

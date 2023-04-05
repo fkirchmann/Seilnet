@@ -1,0 +1,7 @@
+{% macro show_messages(messages) %}
+	{% if messages is iterable %}
+		{% for message in messages %}
+			<div class="alert {{message.cssClass}}" role="alert">{{ i18n(message.i18nFile, message.name, message.params) | raw }}</div>
+		{% endfor %}
+	{% endif %}
+{% endmacro %}

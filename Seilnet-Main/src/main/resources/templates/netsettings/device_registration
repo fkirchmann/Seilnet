@@ -1,0 +1,189 @@
+{% extends "extend/main+menu" %}
+
+{% import "import/editable" %}
+{% import "import/simple_confirmation" %}
+
+{% block title %}{{ i18n("strings", "seilnet") }} {{ i18n("strings", "newDeviceRegistration") }}{% endblock %}
+
+{% block navtitle %}{{ i18n("strings", "networkSettings") }}{% endblock %}
+{% block navtitle_sublink %}{{ netsettings_pathprefix }}/{% endblock %}
+
+{% block additional_js %}
+<script>
+$(document).ready(function() {
+    let changelistener = function() {
+        let enable = true;
+        // This is now checked in the backend, so that we can give the user a meaningful error message if
+        // a field is missing.
+        /*if($('input[name=deviceName]').val().trim() === "") {
+            enable = false;
+        }
+        else if($('input[type=radio][name=macAddress]:checked').val() === "custom"
+                && $('input[name=macAddressCustom]').val().trim() === "") {
+            enable = false;
+        }
+        else if(!$('input[type=radio][name=macAddress]:checked').val()) {
+            enable = false;
+        }
+        else*/ if(!$('input[name=confirm1]:checked').val()
+            || !$('input[name=confirm2]:checked').val()
+            || !$('input[name=confirm3]:checked').val()) {
+            enable = false;
+        }
+        $('#registerBtn').prop('disabled', !enable);
+    };
+    $('form').on('keyup change paste', 'input, select, textarea', changelistener);
+    changelistener();
+});
+</script>
+{% endblock %}
+
+{% block additional_css %}
+{{ editable_css(pathprefix) }}
+<style>
+    table th tr {
+        width: auto !important;
+    }
+    .list-group-item {
+        user-select: none;
+    }
+    .list-group input[type="radio"] {
+        display: none;
+    }
+
+    .list-group input[type="radio"] + .list-group-item {
+        cursor: pointer;
+        min-height: 3em;
+        font-weight: normal;
+    }
+
+    .list-group input[type="radio"]:checked + .list-group-item {
+        background-color: #0275D8;
+        color: #FFF;
+    }
+
+    .list-group input[type="radio"]:checked + .list-group-item:before {
+        color: inherit;
+    }
+
+    .list-group > label:nth-of-type(2n+1) {
+        background-color: #f9f9f9;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h2>{{ i18n("strings", "newDeviceRegistration") }}</h2>
+
+<div class="panel panel-default">
+<div class="panel-body">
+    <b>{{ i18n("strings", "deviceRegistrationExplanationBold") }}</b>
+    {{ i18n("strings", "deviceRegistrationExplanation") }}
+</div></div>
+
+<form id="addDeviceForm" method="post" class="form-horizontal" action="?">
+
+    <div class="form-group">
+        <label class="col-lg-1 control-label">
+            <div class="visible-lg" style="height: 2.75em"></div>
+            {{ i18n("strings", "device") }}
+        </label>
+        <div class="col-lg-7" style="margin-top:0.5em">
+            <div style="min-height: 2em; padding-left: 1em;">
+                <span class="col-sm-6" style="padding-left: 0">{{ i18n("strings", "deviceName") }}</span>
+                <span class="col-sm-6" style="padding-left: 0.5em; ">{{ i18n("strings", "macAddress") }}</span>
+            </div>
+            <div class="list-group">
+                {% for device in unregisteredDevices %}
+                    <input type="radio" name="macAddress" value="{{ device.macAddress }}"
+                           id="radio-{{ device.macAddress }}"
+                        {% if form.macAddress == device.macAddress.toString() %}
+                            checked="true"
+                        {% endif %}/>
+                    <label class="list-group-item"   for="radio-{{ device.macAddress }}">
+                        <span class="col-sm-6" style="padding-left: 0">{{ device.name }}</span>
+                        <span class="col-sm-6">{{ device.macAddress }}</span>
+                    </label>
+                {% else %}
+                    <input type="radio" name="macAddress" value="disabled" id="radio-disabled" disabled/>
+                    <label class="list-group-item" for="radio-disabled">
+                        <span class="col-sm-12" style="padding-left: 0">
+                            {{ i18n("strings", "noUnregisteredDevicesFound") }}
+                        </span>
+                    </label>
+                {% endfor %}
+
+                <input type="radio" name="macAddress" value="custom" id="radio-custom"
+                    {% if form.macAddress == "custom" %}
+                       checked="true"
+                    {% endif %}/>
+                <label class="list-group-item" for="radio-custom" style="min-height: 4em">
+                    <span class="col-sm-6" style="padding-top: 0.5em; padding-left: 0">
+                        {{ i18n("strings", "customMac") }}:
+                    </span>
+                    <span class="col-sm-6">
+                        <input type="text" class="form-control" name="macAddressCustom"  value="{{ form.macAddressCustom }}"
+                               placeholder="{{ i18n("strings", "macAddress") }}"
+                               onclick="$('input[value=custom]').prop('checked', true);"
+                               oninput="$('input[value=custom]').prop('checked', true);">
+                    </span>
+                </label>
+            </div>
+        </div>
+        <div class="col-lg-2">
+            <div class="visible-lg" style="height: 2.75em"></div>
+            <button name="refreshBtn" type="submit" class="btn btn-default">
+                <i class="fa fa-refresh"></i>
+                {{ i18n("strings", "refresh") }}
+            </button>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="deviceName" class="col-lg-1 control-label">{{ i18n("strings", "name") }}</label>
+        <div class="col-lg-4">
+            <input type="text" class="form-control" name="deviceName" id="deviceName" value="{{ form.deviceName }}"
+                   placeholder="{{ i18n("strings", "deviceNamePlaceholder") }}">
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-lg-offset-1 col-lg-11">
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="confirm1"
+                        {% if form.confirm1 != "" %} checked="true" {% endif %}>
+                    {{ i18n("strings", "deviceConfirmation1") | raw }}
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-lg-offset-1 col-lg-11">
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="confirm2"
+                        {% if form.confirm2 != "" %} checked="true" {% endif %}>
+                    {{ i18n("strings", "deviceConfirmation2") | raw }}
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-lg-offset-1 col-lg-11">
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="confirm3"
+                        {% if form.confirm3 != "" %} checked="true" {% endif %}>
+                    {{ i18n("strings", "deviceConfirmation3") | raw }}
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-lg-offset-1 col-lg-11">
+            <button name="registerBtn" id="registerBtn" type="submit" class="btn btn-primary">{{ i18n("strings", "registerNewDevice") }}</button>
+        </div>
+    </div>
+</form>
+
+{% endblock %}

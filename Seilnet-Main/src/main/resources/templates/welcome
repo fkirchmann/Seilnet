@@ -1,0 +1,35 @@
+{% extends "extend/main+menu" %}
+
+{% block title %}{{ i18n("strings", "seilnet") }}{% endblock %}
+
+{% block content %}
+{% for module in internalModules %}
+<div class="panel panel-default" style="margin-bottom: 1em;">
+<div class="panel-body">
+    <h2 style="margin-top: 0px;">{{ i18n(module.i18nFile, module.i18nNameTag) }}</h2>
+    <p>{{ i18n(module.i18nFile, module.i18nDescriptionTag) }}</p>
+    <p style="margin-bottom: 0px;">
+        <a class="btn btn-primary btn-lg" href="{{ module.url }}" role="button">
+            {{ i18n("strings", "open") }}
+        </a>
+    </p>
+</div></div>
+{% endfor %}
+
+{% for module in externalModules %}
+<div class="panel panel-default" style="margin-bottom: 1em;">
+<div class="panel-body">
+    <h2 style="margin-top: 0px;">{{ i18n(module.i18nFile, module.i18nNameTag) }}</h2>
+    <p>{{ i18n(module.i18nFile, module.i18nDescriptionTag) }}</p>
+    <p style="margin-bottom: 0px;">
+        <form action="{{ module.authRedirectUrl }}" target="_blank" method="post" class="form-inline">
+            <button type="submit" class="btn btn-primary btn-lg">
+                {{ i18n("strings", "open") }}
+                <i class="fa fa-external-link-square"></i>
+            </button>
+        </form>
+    </p>
+</div></div>
+{% endfor %}
+
+{% endblock %}

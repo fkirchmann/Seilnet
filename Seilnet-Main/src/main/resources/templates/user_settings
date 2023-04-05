@@ -1,0 +1,54 @@
+{% extends "extend/main+menu" %}
+
+{% block title %}{{ i18n("strings", "seilnet") }}{% endblock %}
+
+{% block head %}
+<style>
+input { margin-bottom: 0.7em; }
+</style>
+{% endblock %}
+
+{% block additional_js %}
+
+{% endblock %}
+
+{% block content %}
+<!--<div class="page-header">
+  <h2>{{ i18n("strings", "seilnet") }}</h2>
+</div>-->
+
+<div class="panel panel-default" style="max-width: 14.5em;">
+<div class="panel-body">
+	<h2 style="margin-top: 0px;">{{ i18n("strings", "language") }}</h2>
+	<div class="btn-group btn-group-lg" role="group">
+		<a href="?lang=en-US" class="btn btn-default"><img src="{{ pathprefix }}/static/img/flags-svg/uk.svg" style="width: 50px;"></a>
+		<a href="?lang=de-DE" class="btn btn-default"><img src="{{ pathprefix }}/static/img/flags-svg/de.svg" style="width: 50px;"></a>
+	</div>
+</div>
+</div>
+
+<div class="panel panel-default" style="width: 25em;">
+<div class="panel-body">
+<form id="changepwForm" class="form-inline" method="post" action="{{ pathprefix }}/settings">
+	<h2 style="margin-top: 0px;">{{ i18n("strings", "changePassword") }}</h2>
+	
+    <div class="form-group">
+		<input class="form-control" name="password" type="password" id="password" placeholder="{{ i18n("strings", "oldPassword") }}"
+			data-fv-notempty="true">
+	</div>
+    <div class="form-group">
+		<input class="form-control" name="newPassword" type="password" id="newPassword" autocomplete="off" placeholder="{{ i18n("strings", "newPassword") }}"
+			data-fv-notempty="true">
+	</div>
+    <div class="form-group">
+		<input class="form-control" name="newPasswordRepeat" type="password" id="newPasswordRepeat" autocomplete="off" placeholder="{{ i18n("strings", "newPasswordRepeat") }}"
+			data-fv-identical="true"
+			data-fv-identical-field="newPassword">
+	</div>
+	<input type="hidden" name="action" value="changepw">
+	
+	<button class="btn btn-primary" type="submit">{{ i18n("strings", "changePassword") }}</button>
+</form>
+</div>
+</div>
+{% endblock %}

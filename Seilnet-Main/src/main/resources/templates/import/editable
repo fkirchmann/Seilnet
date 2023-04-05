@@ -1,0 +1,7 @@
+{% macro editable_js(pathprefix) %}
+<script src="{{ pathprefix }}/static/js/bootstrap-editable.min.js"></script>
+{% endmacro %}
+
+{% macro editable_css(pathprefix) %}
+<link href="{{ pathprefix }}/static/css/bootstrap-editable.css" rel="stylesheet">
+{% endmacro %}

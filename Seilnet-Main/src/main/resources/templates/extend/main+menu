@@ -1,0 +1,38 @@
+{% extends "extend/main" %}
+{% import "import/messages" %}
+
+{% block menu %}
+<nav class="navbar navbar-default" style="margin-top: 1em; margin-bottom: 1em;">
+<div class="container-fluid">
+	<div class="navbar-header">
+		<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#mainmenu-collapse" aria-expanded="false">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		</button>
+		<a class="navbar-brand" href="{{ pathprefix }}/"><i class="fa fa-home"></i></span></a>
+		<a class="navbar-brand" href="{{ pathprefix }}{% block navtitle_sublink %}/{% endblock %}">{% block navtitle %}{{ i18n("strings", "seilnet") }}{% endblock %}</a>
+	</div>
+	<div class="collapse navbar-collapse" id="mainmenu-collapse">
+		{% block modulenav %}{% endblock %}
+		<ul class="nav navbar-nav navbar-right">
+			<li class="dropdown">
+				<a class="dropdown-toggle active" data-toggle="dropdown" href="#" role="button">{{menu_username}} <i class="fa fa-user"></i><span class="caret"></span></a>
+				<ul class="dropdown-menu">
+					<li><a href="{{ pathprefix }}/settings">{{ i18n("strings", "changeSettings") }}</a></li>
+					<li><a href="{{ pathprefix }}/login?logout=true">{{ i18n("strings", "logout") }}</a></li>
+				</ul>
+			</li>
+		</ul>
+	</div>
+</div>
+</nav>
+
+{# {% if messages is iterable %}
+	{% for message in messages %}
+		<div class="alert {{message.cssClass}}" role="alert">{{ i18n(message.i18nFile, message.name, message.params) | raw }}</div>
+	{% endfor %}
+{% endif %} #}
+{{ show_messages(messages) }}
+
+{% endblock %}

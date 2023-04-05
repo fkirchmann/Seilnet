@@ -1,0 +1,144 @@
+{% extends "admin/extend/main+adminmenu" %}
+{% import "import/editable" %}
+{% import "import/select2" %}
+{% import "import/simple_confirmation" %}
+
+{% block title %}{{ i18n("strings", "viewGroup", name) }} - {{ i18n("strings", "seilnetAdmin") }}{% endblock %}
+
+{% block additional_css %}
+{{ editable_css(pathprefix) }}
+{{ select2_css(pathprefix) }}
+{% endblock %}
+
+{% block additional_js %}
+{{ editable_js(pathprefix) }}
+{{ select2_js(pathprefix) }}
+<script>
+$.fn.editable.defaults.mode = 'inline';
+$.fn.editable.defaults.url = '#';
+$.fn.editable.defaults.send = 'always';
+$.fn.editable.defaults.type = 'text';
+$.fn.editable.defaults.emptytext = '{{ i18n("strings", "notSpecified") }}';
+
+$(document).ready(function() {
+	$('#name').editable();
+	$('#email').editable();
+	$('#permissions').editable({
+		value: [{{ permissions | join(', ')}}],
+		source: [
+		{% for permission in availablePermissions %}
+			{value: {{ permission.id }}, text: '{{ i18n(permission.I18nFile, permission.I18nTag) | escape(strategy="js")}}'}
+			{% if loop.index < (loop.length - 1) %}
+				,
+			{% endif %}
+		{% endfor %}
+		]
+	});
+	$('#addMemberId').select2({
+			language: "{{ lang }}",
+			theme: "bootstrap",
+			ajax: {
+				url: "{{ pathprefix }}{{ api_pathprefix }}/user_search",
+				dataType: 'json',
+				delay: 100,
+				data: function (params) {
+					return {
+						searchQuery: params.term
+					};
+				},
+				processResults: function (data) { return {
+					results: data
+				};
+			},
+			cache: true
+		},
+		minimumInputLength: 1
+    });
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<h2>{{ i18n("strings", "viewGroup", name) }}</h2>
+
+<div class="table-responsive">
+<table class="table table-striped">
+	<colgroup>
+		<col width="20%">
+		<col>
+	</colgroup>
+	<tr>
+		<td>
+			{{ i18n("strings", "groupName") }}
+		</td>
+		<td>
+			<a href="#" id="name">{{ name }}</a>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			{{ i18n("strings", "permissions") }}
+		</td>
+		<td>
+			<a href="#" id="permissions" data-type="checklist"></a>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			{{ i18n("strings", "email") }}
+		</td>
+		<td>
+			<a href="#" id="email">{{ email }}</a>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			{{ i18n("strings", "showMailingList") }}
+		</td>
+		<td>
+			<form action="?" class="form-inline" method="post">
+				<input type="hidden" name="doForm" value="toggleShowMailingList">
+				<button type="submit" id="submit" class="btn btn-md btn-{{ showMailingListButtonClass }}">{{ i18n("strings", showMailingList) }}</button>
+			</form>
+		</td>
+	</tr>
+</table>
+</div>
+
+<h3>{{ i18n("strings", "members") }}</h3>
+
+<div class="table-responsive">
+<table class="table table-striped">
+	<colgroup>
+		<col>
+		<col width="5%">
+	</colgroup>
+	<tr>
+		<th colspan="2">
+			{{ i18n("strings", "fullName") }}
+		</th>
+	</tr>
+	{% for member in members %}
+		<tr>
+			<td>
+				{{ member.fullName }}
+			</td>
+			<td>
+				{{ simple_confirmation_btn(showForm, "fa-trash", i18n("strings", "removeMember"), "removeMember", member.id) }}
+			</td>
+		</tr>
+	{% endfor %}
+	<tr>
+		<form method="post" class="form-inline">
+			<input type="hidden" name="doForm" value="addMember">
+			<td >
+				<select style="width: 100%;" id="addMemberId" name="addMemberId" class="form-control" data-placeholder="{{ i18n("strings", "fullNameOrRoomNr") }}"></select>
+			</td>
+			<td>
+				<button type="submit" class="btn btn-default"><i class="fa fa-plus"></i></button>
+			</td>
+		</form>
+	</tr>
+</table>
+</div>
+{% endblock %}

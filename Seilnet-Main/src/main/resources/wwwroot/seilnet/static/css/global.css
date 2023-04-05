@@ -1,0 +1,10 @@
+.inline-box {
+	display: inline-block;
+	margin-bottom: 0px;
+	margin-top: 0px;
+	margin-left: 6px;
+	padding-bottom: 6px;
+	padding-left: 6px;
+	padding-top: 6px;
+	padding-right: 6px;
+}

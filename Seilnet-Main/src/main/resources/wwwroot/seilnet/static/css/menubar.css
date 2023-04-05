@@ -1,0 +1,14 @@
+.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
+	background-color: #f0f0f0;
+}
+
+.inline-box {
+	display: inline-block;
+	margin-bottom: 0px;
+	margin-top: 0px;
+	margin-left: 6px;
+	padding-bottom: 6px;
+	padding-left: 6px;
+	padding-top: 6px;
+	padding-right: 6px;
+}

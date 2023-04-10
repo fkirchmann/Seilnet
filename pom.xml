@@ -25,4 +25,17 @@
         
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <!-- For mvn dependency:go-offline to work with multi-module projects, this is required -->
+                    <!-- See https://stackoverflow.com/a/61600598 -->
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>3.5.0</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>

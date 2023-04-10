@@ -10,6 +10,9 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
 
 import de.rwth.seilgraben.seilnet.firewall.shared.FirewallRuleset.FirewallVlanRuleset;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
+
 /**
  *
  * @author Felix Kirchmann
@@ -21,5 +24,8 @@ public class SharedXStream
 	static
 	{
 		INSTANCE.alias("VlanRuleset", FirewallVlanRuleset.class);
+		INSTANCE.allowTypeHierarchy(FirewallVlanRuleset.class);
+		INSTANCE.allowTypeHierarchy(InetAddress.class);
+		INSTANCE.allowTypeHierarchy(Inet4Address.class);
 	}
 }

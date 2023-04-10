@@ -35,6 +35,9 @@
                         <transformers>
                             <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                 <mainClass>de.rwth.seilgraben.seilnet.firewall.FirewallMain</mainClass>
+                                <manifestEntries>
+                                    <Add-Opens>java.base/java.net</Add-Opens>
+                                </manifestEntries>
                             </transformer>
                         </transformers>
                         <filters>
@@ -70,12 +73,12 @@
   	<dependency>
   		<groupId>com.sparkjava</groupId>
   		<artifactId>spark-core</artifactId>
-  		<version>2.3</version>
+  		<version>2.9.4</version>
   	</dependency>
   	<dependency>
   		<groupId>com.google.code.gson</groupId>
   		<artifactId>gson</artifactId>
-  		<version>2.7</version>
+  		<version>2.10.1</version>
   	</dependency>
   </dependencies>
 </project>

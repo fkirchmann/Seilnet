@@ -262,13 +262,10 @@ $(document).ready(function() {
 		<form id="addDeviceForm" method="post" class="form-inline">
 			<input type="hidden" name="doForm" value="addDevice">
 			<td>
-				<input type="text" class="form-control" name="name" placeholder="{{ i18n("strings", "deviceName") }}"
-				data-fv-notempty="true">
+				<input type="text" class="form-control" name="name" placeholder="{{ i18n("strings", "deviceName") }}">
 			</td>
 			<td>
-				<input type="text" class="form-control" name="macAddress" placeholder="{{ i18n("strings", "macAddress") }}"
-				data-fv-mac="true"
-				data-fv-notempty="true">
+				<input type="text" class="form-control" name="macAddress" placeholder="{{ i18n("strings", "macAddress") }}">
 			</td>
 			<td colspan="2">
 				<button type="submit" class="btn btn-default"><i class="fa fa-plus"></i></button>

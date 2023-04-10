@@ -297,7 +297,7 @@ public class ViewUser extends WebPage
 				}
 				catch (NoFreeIPv4Exception e)
 				{
-					msgs.addError("string", "noFreeIPv4");
+					msgs.addError("strings", "noFreeIPv4");
 				}
 				break;
 			}

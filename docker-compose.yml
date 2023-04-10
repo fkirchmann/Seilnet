@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  seilnet-main:
+    build:
+      context: .
+      dockerfile: Seilnet-Main/Dockerfile
+      args:
+        DOCKER_BUILDKIT: 1
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    volumes:
+      - ./demo/config/main:/config
+    ports:
+      - "45678:45678"
+    networks:
+      - seilnet
+
+  seilnet-firewall:
+    build:
+      context: .
+      dockerfile: Seilnet-Firewall/Dockerfile
+      args:
+        DOCKER_BUILDKIT: 1
+    volumes:
+      - ./demo/config/firewall:/config
+    networks:
+      - seilnet
+
+  mariadb:
+    image: mariadb:10
+    environment:
+      - MYSQL_ROOT_PASSWORD=changeme
+      - MYSQL_DATABASE=Seilnet
+      - MYSQL_USER=seilnet
+      - MYSQL_PASSWORD=seilnet
+    volumes:
+      - mariadb-data:/var/lib/mysql
+    healthcheck:
+      test: "mysql $$MYSQL_DATABASE -u$$MYSQL_USER -p$$MYSQL_PASSWORD -e 'SELECT 1;'"
+      interval: 2s
+      timeout: 2s
+      retries: 60
+    networks:
+      - seilnet
+
+volumes:
+  mariadb-data:
+
+networks:
+  seilnet:

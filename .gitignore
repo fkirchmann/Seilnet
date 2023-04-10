@@ -3,3 +3,6 @@ target/
 dependency-reduced-pom.xml
 *.iml
 .idea
+
+# Application-generated
+/demo/config/firewall/rules

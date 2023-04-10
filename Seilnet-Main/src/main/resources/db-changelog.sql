@@ -140,3 +140,10 @@ ALTER TABLE Users
 --changeset fkirchmann:4
 ALTER TABLE Users
   ADD COLUMN  Adblock BOOLEAN DEFAULT FALSE NOT NULL AFTER Wlan_Password;
+
+--changeset fkirchmann:5
+--comment Create a dummy room if no rooms exists, for demo purposes.
+INSERT INTO Rooms (Room_Nr, VLAN) SELECT '1001', 101 FROM dual WHERE NOT EXISTS (SELECT * FROM Rooms);
+INSERT INTO IPv4_Addresses (Address) SELECT '10.0.0.100' FROM dual WHERE NOT EXISTS (SELECT * FROM IPv4_Addresses);
+INSERT INTO Groups (Name, Email, Show_Mailing_List) SELECT 'Example Group', 'group@example.com', TRUE
+                                                    FROM dual WHERE NOT EXISTS (SELECT * FROM Groups);

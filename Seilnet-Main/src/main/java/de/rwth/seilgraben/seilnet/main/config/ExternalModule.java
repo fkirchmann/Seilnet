@@ -30,11 +30,12 @@ import java.util.function.Predicate;
  */
 public enum ExternalModule implements Module
 {
-	TREASURY("treasury", "/kasse/login?token=%s", "redacted", user -> user.hasPermission(Permission.TREASURY)),
+	/*TREASURY("treasury", "/kasse/login?token=%s", "redacted", user -> user.hasPermission(Permission.TREASURY)),
 	KEYS("keys", "/schluessel/login?token=%s", "redacted", user -> user.hasPermission(Permission.KEY_MANAGEMENT)),
 	CALENDAR_BAR("calendar_bar", "/calendar/bar/admin/login?token=%s", "redacted", user -> user.hasPermission(Permission.CALENDAR_BAR)),
 	CALENDAR_MEDIA("calendar_media", "/calendar/media/admin/login?token=%s", "redacted", user -> user.hasPermission(Permission.CALENDAR_MEDIA)),
-	CALENDAR_GARDEN("calendar_garden", "/calendar/garden/admin/login?token=%s", "redacted", user -> user.hasPermission(Permission.CALENDAR_GARDEN));
+	CALENDAR_GARDEN("calendar_garden", "/calendar/garden/admin/login?token=%s", "redacted", user -> user.hasPermission(Permission.CALENDAR_GARDEN));*/
+	PLACEHOLDER("placeholder", "/placeholder/login?token=%s", "topsecret", user -> false);
 	
 	/**
 	 * Defines an external module. It will be visible in the user's dashboard (if he has access to it).

@@ -90,6 +90,14 @@ public class SeilnetMain
 				config.getMysqlPass());
 		db.test();
 		
+		Log.info("Connecting to firewall...");
+		firewallClient = new FirewallClient(config.getFirewallAddr(), config.getFirewallPort(),
+				config.getFirewallApiKey());
+		
+		Log.info("Creating firewall rules...");
+		firewallManager = new FirewallManager(firewallClient, db);
+		firewallManager.updateAllRules();
+
 		if (config.getWebDebugAutoLogin() != null)
 		{
 			Log.warn(LogCategory.CFG,
@@ -121,14 +129,6 @@ public class SeilnetMain
 				user.addToGroup(admins);
 			}
 		}
-		
-		Log.info("Connecting to firewall...");
-		firewallClient = new FirewallClient(config.getFirewallAddr(), config.getFirewallPort(),
-				config.getFirewallApiKey());
-		
-		Log.info("Creating firewall rules...");
-		firewallManager = new FirewallManager(firewallClient, db);
-		firewallManager.updateAllRules();
 		
 		Log.info("Starting webserver...");
 		WebServer.INSTANCE.start(db, config.getWebListenAddr(), config.getWebListenPort());

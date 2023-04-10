@@ -6,6 +6,13 @@
 
 <h2>Changelog</h2>
 
+<hr> <h4>10.04.2023</h4>
+Änderungen von Felix Kirchmann:
+<ul>
+    <li>Überholung des technischen Unterbaus: alle Bibliotheken aktualisiert, die App funktioniert jetzt auch mit aktuellem Java 17.</li>
+    <li>Änderungen im Hintergrund, die Entwicklung und Deployment erleichtern, u.a. Docker und docker-compose</li>
+</ul>
+
 <hr> <h4>02.09.2021</h4>
 Änderungen von Felix Kirchmann:
 <ul>

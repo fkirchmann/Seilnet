@@ -18,7 +18,6 @@ $(document).ready(function() {
 	});
 });
 
-{{ tomorrow_date_function() }}
 </script>
 {% endblock %}
 
@@ -30,24 +29,18 @@ $(document).ready(function() {
 	<div class="form-group row">
 		<label class="col-sm-2 control-label">{{ i18n("strings", "fullName") }}</label>
 		<div class="col-sm-4" style="max-width: 280px; padding-right: 5px;">
-			<input autofocus tabindex="1" type="text" class="form-control" name="firstName" value="{{ firstName }}" placeholder="{{ i18n("strings", "firstName") }}"
-				data-fv-row=".col-sm-4"
-				data-fv-notempty="true">
+			<input autofocus tabindex="1" type="text" class="form-control" name="firstName" value="{{ firstName }}" placeholder="{{ i18n("strings", "firstName") }}">
 		</div>
 
 		<div class="col-sm-4" style="max-width: 280px; padding-left: 5px;">
-			<input tabindex="2" type="text" class="form-control" name="lastName" value="{{ lastName }}" placeholder="{{ i18n("strings", "lastName") }}"
-				data-fv-row=".col-sm-4"
-				data-fv-notempty="true" >
+			<input tabindex="2" type="text" class="form-control" name="lastName" value="{{ lastName }}" placeholder="{{ i18n("strings", "lastName") }}">
 		</div>
 	</div>
 
 	<div class="form-group row">
 		<label class="col-sm-2 control-label">{{ i18n("strings", "email") }}</label>
 		<div class="col-sm-5">
-			<input tabindex="3" type="text" class="form-control" name="email" value="{{ email }}"
-				data-fv-notempty="true"
-				data-fv-emailaddress="true">
+			<input tabindex="3" type="text" class="form-control" name="email" value="{{ email }}">
 		</div>
 	</div>
 
@@ -56,7 +49,7 @@ $(document).ready(function() {
 		<div class="col-sm-3">
 			<div class="radio">
 				<label>
-					<input tabindex="4" type="radio" name="language" id="language" value="de-DE" data-fv-notempty="true" {{ language_de_DE }}> {{ i18n("strings", "locale-de-DE") }}
+					<input tabindex="4" type="radio" name="language" id="language" value="de-DE" {{ language_de_DE }}> {{ i18n("strings", "locale-de-DE") }}
 				</label>
 			</div>
 			<div class="radio">
@@ -77,32 +70,21 @@ $(document).ready(function() {
 	<div class="form-group row">
 		<label for="birthday" class="col-sm-2 control-label">{{ i18n("strings", "birthday") }}</label>
 		<div class="col-sm-2">
-			<input tabindex="6" type="text" class="form-control" name="birthday" id="birthday" value="{{ birthday }}" placeholder="DD.MM.YYYY"
-				data-fv-notempty="true"
-				data-fv-date="true"
-				data-fv-date-format="DD.MM.YYYY"
-				data-fv-date-max="tomorrowDate">
+			<input tabindex="6" type="text" class="form-control" name="birthday" id="birthday" value="{{ birthday }}" placeholder="DD.MM.YYYY">
 		</div>
 	</div>
 
 	<div class="form-group row">
         <label for="matriculationNumber" class="col-sm-2 control-label">{{ i18n("strings", "matriculationNumber") }} *</label>
         <div class="col-sm-2">
-            <input tabindex="7" type="text" class="form-control" name="matriculationNumber" id="matriculationNumber" value="{{ matriculationNumber }}" placeholder="123456"
-                data-fv-digits="true">
+            <input tabindex="7" type="text" class="form-control" name="matriculationNumber" id="matriculationNumber" value="{{ matriculationNumber }}" placeholder="123456">
         </div>
     </div>
 
 	<div class="form-group row">
 		<label for="roomNr" class="col-sm-2 control-label">{{ i18n("strings", "room") }}</label>
 		<div class="col-sm-2">
-			<input tabindex="8" type="text" class="form-control" name="roomNr" id="roomNr" value="{{ roomNr }}" placeholder="{{ i18n("strings", "roomNr") }}"
-				data-fv-notempty="true"
-				data-fv-digits="true"
-				data-fv-greaterthan="true"
-				data-fv-greaterthan-value="1000"
-				data-fv-lessthan="true"
-				data-fv-lessthan-value="1500">
+			<input tabindex="8" type="text" class="form-control" name="roomNr" id="roomNr" value="{{ roomNr }}" placeholder="{{ i18n("strings", "roomNr") }}">
 		</div>
 	</div> 
 	
@@ -111,7 +93,7 @@ $(document).ready(function() {
 		<div class="col-sm-2">
 			<div class="radio">
 				<label>
-					<input tabindex="9" type="radio" name="subtenant" value="false" data-fv-notempty="true" {{ subtenant_false }}> {{ i18n("strings", "mainTenant") }}
+					<input tabindex="9" type="radio" name="subtenant" value="false" {{ subtenant_false }}> {{ i18n("strings", "mainTenant") }}
 				</label>
 			</div>
 			<div class="radio">
@@ -125,10 +107,7 @@ $(document).ready(function() {
 	<div class="form-group row">
 		<label for="leaseExpiration" class="col-sm-2 control-label">{{ i18n("strings", "leaseExpiration") }}</label>
 		<div class="col-sm-2">
-			<input tabindex="10" type="text" class="form-control" name="leaseExpiration" value="{{ leaseExpiration }}" placeholder="DD.MM.YYYY"
-				data-fv-date="true"
-				data-fv-date-format="DD.MM.YYYY"
-				data-fv-date-min="tomorrowDate">
+			<input tabindex="10" type="text" class="form-control" name="leaseExpiration" value="{{ leaseExpiration }}" placeholder="DD.MM.YYYY">
 		</div>
 	</div>
 

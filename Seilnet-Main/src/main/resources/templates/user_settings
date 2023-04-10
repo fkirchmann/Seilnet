@@ -33,17 +33,13 @@ input { margin-bottom: 0.7em; }
 	<h2 style="margin-top: 0px;">{{ i18n("strings", "changePassword") }}</h2>
 	
     <div class="form-group">
-		<input class="form-control" name="password" type="password" id="password" placeholder="{{ i18n("strings", "oldPassword") }}"
-			data-fv-notempty="true">
+		<input class="form-control" name="password" type="password" id="password" placeholder="{{ i18n("strings", "oldPassword") }}">
 	</div>
     <div class="form-group">
-		<input class="form-control" name="newPassword" type="password" id="newPassword" autocomplete="off" placeholder="{{ i18n("strings", "newPassword") }}"
-			data-fv-notempty="true">
+		<input class="form-control" name="newPassword" type="password" id="newPassword" autocomplete="off" placeholder="{{ i18n("strings", "newPassword") }}">
 	</div>
     <div class="form-group">
-		<input class="form-control" name="newPasswordRepeat" type="password" id="newPasswordRepeat" autocomplete="off" placeholder="{{ i18n("strings", "newPasswordRepeat") }}"
-			data-fv-identical="true"
-			data-fv-identical-field="newPassword">
+		<input class="form-control" name="newPasswordRepeat" type="password" id="newPasswordRepeat" autocomplete="off" placeholder="{{ i18n("strings", "newPasswordRepeat") }}">
 	</div>
 	<input type="hidden" name="action" value="changepw">
 	

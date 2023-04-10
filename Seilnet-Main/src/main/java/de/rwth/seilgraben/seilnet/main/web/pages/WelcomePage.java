@@ -41,6 +41,7 @@ public class WelcomePage extends WebPage
 				return "";
 			});
 		}
+		Spark.redirect.get("/", Constants.PATH_PREFIX + "/");
 		Spark.get(Constants.PATH_PREFIX + "/", welcomeRoute);
 	}
 	

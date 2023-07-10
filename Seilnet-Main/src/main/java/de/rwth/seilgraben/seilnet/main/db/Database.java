@@ -33,6 +33,7 @@ import de.rwth.seilgraben.seilnet.main.LogCategory;
 import de.rwth.seilgraben.seilnet.main.SeilnetMain;
 import de.rwth.seilgraben.seilnet.main.config.Constants;
 import de.rwth.seilgraben.seilnet.main.config.Permission;
+import de.rwth.seilgraben.seilnet.util.MacAddress;
 import liquibase.Contexts;
 import liquibase.Liquibase;
 import liquibase.database.jvm.JdbcConnection;
@@ -245,7 +246,26 @@ public class Database
 	{
 		return userCache.get(id);
 	}
-	
+
+	synchronized public User getUserByMacAddress(@NonNull MacAddress macAddress)
+	{
+		Map<String, Object> queryFields = new HashMap<>();
+		queryFields.put("MAC_Address", macAddress.toString());
+		List<DBUserDevice> results;
+		try {
+			results = userDeviceDao.queryForFieldValues(queryFields);
+		} catch (SQLException e) {
+			Log.warn(LogCategory.DB, e);
+			return null;
+		}
+		Optional<DBUserDevice> optionalDevice = results.stream()
+				.filter(r -> r.getAssignedTo() == null) // filter out devices that were removed by the user
+				.max(Comparator.comparing(DBUserDevice::getAssignedFrom));
+		return optionalDevice
+				.map(dbUserDevice -> getUserByID(dbUserDevice.getUser().getId()))
+				.orElse(null);
+	}
+
 	@SneakyThrows
 	synchronized public User getUserByEmail(String email)
 	{

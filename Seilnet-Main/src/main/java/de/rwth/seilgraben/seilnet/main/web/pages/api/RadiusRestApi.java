@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import de.rwth.seilgraben.seilnet.util.MacAddress;
 import org.eclipse.jetty.http.HttpStatus;
 
 import com.esotericsoftware.minlog.Log;
@@ -43,6 +44,8 @@ public class RadiusRestApi extends WebPage
 								REQUEST_AP_SSID = "ssidAp",
 								REQUEST_CLIENT_MAC = "macAddressClient",
 								REQUEST_AP_SSID_ROOM = "ssidRoom";
+
+	private static final Pattern MAC_ADDRESS_PATTERN = Pattern.compile("^([0-9A-Fa-f]{2}[:-]?){5}([0-9A-Fa-f]{2})$");
 
 	private static Gson GSON = new Gson();
 	
@@ -105,11 +108,23 @@ public class RadiusRestApi extends WebPage
 		 * Decode information (user and MAC addresses, if available) from the request.
 		 * Fields:
 		 * 0 - method (auth or postauth)
-		 * 1 - username
+		 * 1 - username or Client MAC address
 		 * 2 - combined AP MAC and SSID
 		 * 3 - Client MAC
 		 */
-		request.attribute(REQUEST_USER_NAME, request.splat()[1]);
+		String arg1 = request.splat()[1];
+		if (MAC_ADDRESS_PATTERN.matcher(arg1).matches()){
+			//if mac address is given, get username by mac address
+			try {
+				request.attribute(REQUEST_USER_NAME, getDb().getUserByMacAddress(new MacAddress(arg1)));
+			} catch (IllegalArgumentException e) {
+				Log.warn("Invalid MAC address: " + arg1);
+			}
+		} else {
+			//if username is given, just use it
+			request.attribute(REQUEST_USER_NAME, arg1);
+		}
+
 		Log.trace(LogCategory.RADIUS, "URI: " + request.uri());
 		Log.trace(LogCategory.RADIUS, "-> Username: " + (String) request.attribute(REQUEST_USER_NAME));
 		// If the request includes the AP and client MAC, decode those too
@@ -204,7 +219,13 @@ public class RadiusRestApi extends WebPage
 					getDb().logAuthEvent(null, getClientInfo(request), AuthType.WLAN, AuthResult.WRONG_PASSWORD);
 					Spark.halt(HttpStatus.UNAUTHORIZED_401);
 				}
-				jsonResponse.put("control:Cleartext-Password", user.getWlanPassword());
+				if (MAC_ADDRESS_PATTERN.matcher(request.splat()[1]).matches()){
+					// prepare response for UidIot
+					// See https://mistererwin.github.io/UniFiPPSK/ for details
+					jsonResponse.put("Tunnel-Password", user.getWlanPassword());
+				} else {
+					jsonResponse.put("control:Cleartext-Password", user.getWlanPassword());
+				}
 			}
 			if(room.getVlan() != null)
 			{

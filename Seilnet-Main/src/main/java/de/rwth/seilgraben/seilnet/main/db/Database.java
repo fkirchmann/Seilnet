@@ -247,23 +247,23 @@ public class Database
 		return userCache.get(id);
 	}
 
+	@SneakyThrows
 	synchronized public User getUserByMacAddress(@NonNull MacAddress macAddress)
 	{
-		Map<String, Object> queryFields = new HashMap<>();
-		queryFields.put("MAC_Address", macAddress);
-		List<DBUserDevice> results;
+		GenericRawResults<String[]> results = userDeviceDao.queryRaw(
+				"SELECT User_ID FROM User_Devices WHERE MAC_Address = ?" +
+				" AND Assigned_To is NULL" +
+				" ORDER BY Assigned_From DESC" +
+				" LIMIT 1", macAddress.toString());
 		try {
-			results = userDeviceDao.queryForFieldValuesArgs(queryFields);
-		} catch (SQLException e) {
-			Log.warn(LogCategory.DB, e);
-			return null;
+			String[] firstResult = results.getFirstResult();
+			if (firstResult == null || firstResult.length == 0) {
+				return null;
+			}
+			return getUserByID(Integer.parseInt(firstResult[0]));
+		} finally {
+			results.close();
 		}
-		Optional<DBUserDevice> optionalDevice = results.stream()
-				.filter(r -> r.getAssignedTo() == null) // filter out devices that were removed by the user
-				.max(Comparator.comparing(DBUserDevice::getAssignedFrom));
-		return optionalDevice
-				.map(dbUserDevice -> getUserByID(dbUserDevice.getUser().getId()))
-				.orElse(null);
 	}
 
 	@SneakyThrows
@@ -351,27 +351,26 @@ public class Database
 		GenericRawResults<String[]> results = userDao.queryRaw("SELECT Id, First_Name, Last_Name FROM Users "
 				+ "WHERE MATCH(First_Name,Last_Name) AGAINST (? IN BOOLEAN MODE)", query.toString());
 		Map<Integer, String> searchResults = new HashMap<>();
-		synchronized (this)
-		{
-			Room room = getRoomByNumber(nameQuery.trim());
-			if (room != null)
-			{
-				User tenant = room.getCurrentUser();
-				if (tenant != null)
-				{
-					User main = room.getMainTenant();
-					if (!main.equals(tenant))
-					{
-						searchResults.put(main.getId(), main.getFullName());
+		try {
+			synchronized (this) {
+				Room room = getRoomByNumber(nameQuery.trim());
+				if (room != null) {
+					User tenant = room.getCurrentUser();
+					if (tenant != null) {
+						User main = room.getMainTenant();
+						if (!main.equals(tenant)) {
+							searchResults.put(main.getId(), main.getFullName());
+						}
+						searchResults.put(tenant.getId(), tenant.getFullName());
 					}
-					searchResults.put(tenant.getId(), tenant.getFullName());
+
 				}
-				
 			}
-		}
-		for (String[] result : results)
-		{
-			searchResults.put(Integer.parseInt(result[0]), result[1] + " " + result[2]);
+			for (String[] result : results) {
+				searchResults.put(Integer.parseInt(result[0]), result[1] + " " + result[2]);
+			}
+		} finally {
+			results.close();
 		}
 		return searchResults;
 	}

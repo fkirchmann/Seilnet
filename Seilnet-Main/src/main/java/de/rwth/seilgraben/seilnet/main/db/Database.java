@@ -250,11 +250,13 @@ public class Database
 	@SneakyThrows
 	synchronized public User getUserByMacAddress(@NonNull MacAddress macAddress)
 	{
-		GenericRawResults<String[]> results = userDeviceDao.queryRaw(
-				"SELECT User_ID FROM User_Devices WHERE MAC_Address = ?" +
+		String sql = "SELECT User_ID FROM User_Devices WHERE MAC_Address = '" + macAddress.toString() + "'" +
 				" AND Assigned_To is NULL" +
 				" ORDER BY Assigned_From DESC" +
-				" LIMIT 1", macAddress.toString());
+				" LIMIT 1";
+		GenericRawResults<String[]> results = userDeviceDao.queryRaw(sql);
+		Log.trace("Query: {}", sql);
+		Log.trace("Columns: {}", Arrays.toString(results.getColumnNames()));
 		try {
 			String[] firstResult = results.getFirstResult();
 			if (firstResult == null || firstResult.length == 0) {

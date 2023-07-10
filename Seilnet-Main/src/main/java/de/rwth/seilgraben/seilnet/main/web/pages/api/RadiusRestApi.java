@@ -10,6 +10,7 @@ import static spark.Spark.*;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -113,16 +114,17 @@ public class RadiusRestApi extends WebPage
 		 * 3 - Client MAC
 		 */
 		String arg1 = request.splat()[1];
+		request.attribute(REQUEST_USER_NAME, arg1);
+		// if mac address is given, try to get username by mac address
 		if (MAC_ADDRESS_PATTERN.matcher(arg1).matches()){
-			//if mac address is given, get username by mac address
+			Optional<User> user = Optional.empty();
 			try {
-				request.attribute(REQUEST_USER_NAME, getDb().getUserByMacAddress(new MacAddress(arg1)));
+				user = Optional.ofNullable(getDb().getUserByMacAddress(new MacAddress(arg1)));
 			} catch (IllegalArgumentException e) {
 				Log.warn("Invalid MAC address: " + arg1);
 			}
-		} else {
-			//if username is given, just use it
-			request.attribute(REQUEST_USER_NAME, arg1);
+			user.map(User::getRoomAssignment)
+					.ifPresent(roomAssignment -> request.attribute(REQUEST_USER_NAME, roomAssignment));
 		}
 
 		Log.trace(LogCategory.RADIUS, "URI: " + request.uri());
@@ -219,7 +221,7 @@ public class RadiusRestApi extends WebPage
 					getDb().logAuthEvent(null, getClientInfo(request), AuthType.WLAN, AuthResult.WRONG_PASSWORD);
 					Spark.halt(HttpStatus.UNAUTHORIZED_401);
 				}
-				if (MAC_ADDRESS_PATTERN.matcher(request.splat()[1]).matches()){
+				if (request.splat().length >= 2 && MAC_ADDRESS_PATTERN.matcher(request.splat()[1]).matches()){
 					// prepare response for UidIot
 					// See https://mistererwin.github.io/UniFiPPSK/ for details
 					jsonResponse.put("Tunnel-Password", user.getWlanPassword());

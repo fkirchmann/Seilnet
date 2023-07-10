@@ -45,7 +45,7 @@ public class RadiusRestApi extends WebPage
 								REQUEST_AP_SSID = "ssidAp",
 								REQUEST_CLIENT_MAC = "macAddressClient",
 								REQUEST_AP_SSID_ROOM = "ssidRoom",
-								REQUEST_USE_TUNNEL_TYPE = "useTunnelType";
+								REQUEST_SET_TUNNEL_PASSWORD = "useTunnelType";
 
 	private static final Pattern MAC_ADDRESS_PATTERN = Pattern.compile("^([0-9A-Fa-f]{2}[:-]?){5}([0-9A-Fa-f]{2})$");
 
@@ -118,7 +118,7 @@ public class RadiusRestApi extends WebPage
 
 		String arg1 = request.splat()[1];
 		request.attribute(REQUEST_USER_NAME, arg1);
-		request.attribute(REQUEST_USE_TUNNEL_TYPE, false);
+		request.attribute(REQUEST_SET_TUNNEL_PASSWORD, false);
 		// if mac address is given, try to get username by mac address
 		if (MAC_ADDRESS_PATTERN.matcher(arg1).matches()){
 			Log.trace(LogCategory.RADIUS, "-> MAC address detected: " + arg1);
@@ -132,7 +132,7 @@ public class RadiusRestApi extends WebPage
 			user.map(User::getRoomAssignment).ifPresent(roomAssignment -> {
 					Log.trace(LogCategory.RADIUS, "-> Room: " + roomAssignment.getRoom().getRoomNumber());
 					request.attribute(REQUEST_USER_NAME, roomAssignment.getRoom().getRoomNumber());
-					request.attribute(REQUEST_USE_TUNNEL_TYPE, true);
+					request.attribute(REQUEST_SET_TUNNEL_PASSWORD, true);
 				});
 		}
 
@@ -229,13 +229,12 @@ public class RadiusRestApi extends WebPage
 					getDb().logAuthEvent(null, getClientInfo(request), AuthType.WLAN, AuthResult.WRONG_PASSWORD);
 					Spark.halt(HttpStatus.UNAUTHORIZED_401);
 				}
-				if (request.attribute(REQUEST_USE_TUNNEL_TYPE)){
+				if (request.attribute(REQUEST_SET_TUNNEL_PASSWORD)){
 					// prepare response for UidIot
 					// See https://mistererwin.github.io/UniFiPPSK/ for details
 					jsonResponse.put("Tunnel-Password", user.getWlanPassword());
-				} else {
-					jsonResponse.put("control:Cleartext-Password", user.getWlanPassword());
 				}
+				jsonResponse.put("control:Cleartext-Password", user.getWlanPassword());
 			}
 			if(room.getVlan() != null)
 			{

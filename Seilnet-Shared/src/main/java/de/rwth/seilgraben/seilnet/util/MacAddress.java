@@ -49,7 +49,7 @@ public class MacAddress
 		mac = new byte[6];
 		for (int i = 0; i < 6; i++)
 		{
-			mac[i] = (byte) Integer.parseInt(macStrLower.substring(i, i + 2), 16);
+			mac[i] = (byte) Integer.parseInt(macStrLower.substring(i * 2, (i * 2) + 2), 16);
 		}
 	}
 	

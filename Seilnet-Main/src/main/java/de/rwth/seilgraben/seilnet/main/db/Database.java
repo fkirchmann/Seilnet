@@ -253,7 +253,7 @@ public class Database
 		queryFields.put("MAC_Address", macAddress);
 		List<DBUserDevice> results;
 		try {
-			results = userDeviceDao.queryForFieldValues(queryFields);
+			results = userDeviceDao.queryForFieldValuesArgs(queryFields);
 		} catch (SQLException e) {
 			Log.warn(LogCategory.DB, e);
 			return null;

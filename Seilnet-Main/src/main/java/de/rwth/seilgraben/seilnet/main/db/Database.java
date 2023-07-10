@@ -250,7 +250,7 @@ public class Database
 	synchronized public User getUserByMacAddress(@NonNull MacAddress macAddress)
 	{
 		Map<String, Object> queryFields = new HashMap<>();
-		queryFields.put("MAC_Address", macAddress.toString());
+		queryFields.put("MAC_Address", macAddress);
 		List<DBUserDevice> results;
 		try {
 			results = userDeviceDao.queryForFieldValues(queryFields);

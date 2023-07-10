@@ -9,6 +9,7 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 
 import de.rwth.seilgraben.seilnet.firewall.shared.FirewallRuleset.FirewallVlanRuleset;
+import de.rwth.seilgraben.seilnet.util.MacAddress;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -27,5 +28,6 @@ public class SharedXStream
 		INSTANCE.allowTypeHierarchy(FirewallVlanRuleset.class);
 		INSTANCE.allowTypeHierarchy(InetAddress.class);
 		INSTANCE.allowTypeHierarchy(Inet4Address.class);
+		INSTANCE.allowTypeHierarchy(MacAddress.class);
 	}
 }

@@ -119,22 +119,6 @@ public class RadiusRestApi extends WebPage
 		String arg1 = request.splat()[1];
 		request.attribute(REQUEST_USER_NAME, arg1);
 		request.attribute(REQUEST_SET_TUNNEL_AUTHENTICATED, false);
-		// if mac address is given, try to get username by mac address
-		if (MAC_ADDRESS_PATTERN.matcher(arg1).matches()){
-			Log.trace(LogCategory.RADIUS, "-> MAC address detected: " + arg1);
-			Optional<User> user = Optional.empty();
-			try {
-				user = Optional.ofNullable(getDb().getUserByMacAddress(new MacAddress(arg1)));
-			} catch (IllegalArgumentException e) {
-				Log.warn("Invalid MAC address: " + arg1);
-			}
-			Log.trace(LogCategory.RADIUS, "-> User: " + user.map(User::getFullName).orElse("Not Found"));
-			user.map(User::getRoomAssignment).ifPresent(roomAssignment -> {
-					Log.trace(LogCategory.RADIUS, "-> Room: " + roomAssignment.getRoom().getRoomNumber());
-					request.attribute(REQUEST_USER_NAME, roomAssignment.getRoom().getRoomNumber());
-					request.attribute(REQUEST_SET_TUNNEL_AUTHENTICATED, true);
-				});
-		}
 
 		Log.trace(LogCategory.RADIUS, "-> Username: " + request.attribute(REQUEST_USER_NAME));
 		// If the request includes the AP and client MAC, decode those too
@@ -146,16 +130,37 @@ public class RadiusRestApi extends WebPage
 			request.attribute(REQUEST_AP_MAC, request.splat()[2].split(":")[0].replace('-', ':').toLowerCase());
 			request.attribute(REQUEST_AP_SSID, request.splat()[2].split(":")[1]);
 			request.attribute(REQUEST_CLIENT_MAC, request.splat()[3].replaceAll("/.*", "").replace('-', ':').toLowerCase());
-			Log.trace(LogCategory.RADIUS, "-> AP SSID: \"" + (String) request.attribute(REQUEST_AP_SSID) + "\"");
+			String ssid = request.attribute(REQUEST_AP_SSID);
+			Log.trace(LogCategory.RADIUS, "-> AP SSID: \"" + ssid + "\"");
 			Pattern pattern;
-			if((pattern = SeilnetMain.getConfig().getWebRadiusRoomSSIDRegex()) != null) {
-				Matcher matcher = pattern.matcher(request.attribute(REQUEST_AP_SSID));
+			if(ssid != null && ssid.equals(SeilnetMain.getConfig().getWebRadiusUidiotSSID())) {
+				Log.trace(LogCategory.RADIUS, "  -> SSID matches web_radius_uidiot_ssid, using UIDIoT mode");
+				// if mac address is given, try to get username by mac address
+				if (MAC_ADDRESS_PATTERN.matcher(arg1).matches()){
+					Log.trace(LogCategory.RADIUS, "-> MAC address detected: " + arg1);
+					Optional<User> user = Optional.empty();
+					try {
+						user = Optional.ofNullable(getDb().getUserByMacAddress(new MacAddress(arg1)));
+					} catch (IllegalArgumentException e) {
+						Log.warn("Invalid MAC address: " + arg1);
+					}
+					Log.trace(LogCategory.RADIUS, "-> Mapping to User: "
+							+ user.map(User::getFullName).orElse("Not Found"));
+					user.map(User::getRoomAssignment).ifPresent(roomAssignment -> {
+						Log.trace(LogCategory.RADIUS, "-> Mapping to Room: "
+								+ roomAssignment.getRoom().getRoomNumber());
+						request.attribute(REQUEST_USER_NAME, roomAssignment.getRoom().getRoomNumber());
+						request.attribute(REQUEST_SET_TUNNEL_AUTHENTICATED, true);
+					});
+				}
+			} else if((pattern = SeilnetMain.getConfig().getWebRadiusRoomSSIDRegex()) != null) {
+				Matcher matcher = pattern.matcher(ssid);
 				if(!matcher.find()) {
 					Log.trace(LogCategory.RADIUS, "  -> SSID does not match web_radius_room_ssid_regex");
 				} else {
 					if(matcher.groupCount() != 1) {
 						Log.warn(LogCategory.RADIUS, "web_radius_room_ssid_regex matched SSID \""
-								+ request.attribute(REQUEST_AP_SSID) + "\", but capture group count (" + matcher.groupCount()
+								+ ssid + "\", but capture group count (" + matcher.groupCount()
 								+ ") is not equal to expected group count (1). Please review configured regex.");
 					} else {
 						Room room = getDb().getRoomByNumber(matcher.group(1));
@@ -171,6 +176,7 @@ public class RadiusRestApi extends WebPage
 					}
 				}
 			}
+
 			Log.trace(LogCategory.RADIUS, "-> AP MAC: " + (String) request.attribute(REQUEST_AP_MAC));
 			Log.trace(LogCategory.RADIUS, "-> Client MAC: " + (String) request.attribute(REQUEST_CLIENT_MAC));
 		}

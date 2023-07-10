@@ -33,7 +33,7 @@ public class SeilnetConfig extends Config
 	private Inet4Address	adblockDnsServer;
 	private int				logLevel, oldIpRetentionDays, webListenPort, smtpPort, firewallPort;
 	private String			webListenAddr, webExtUrl,
-			webRadiusUser, webRadiusPassword,// webRadiusRoomSSIDRegex,
+			webRadiusUser, webRadiusPassword, webRadiusUidiotSSID,
 			smtpHost, smtpSender, smtpUser,	smtpPassword,
 			firewallApiKey, firewallAddr,
 			mysqlHost, mysqlDatabase,mysqlUser, mysqlPass,
@@ -59,6 +59,8 @@ public class SeilnetConfig extends Config
 		{
 			webRadiusUser = option("web_radius_user");
 			webRadiusPassword = option("web_radius_password");
+			webRadiusUidiotSSID = hasOption("web_radius_uidiot_ssid") ?
+					option("web_radius_uidiot_ssid") : null;
 			webRadiusRoomSSIDRegex = hasOption("web_radius_room_ssid_regex") ?
 					optionRegex("web_radius_room_ssid_regex") : null;
 		}

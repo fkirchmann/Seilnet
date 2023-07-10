@@ -113,22 +113,27 @@ public class RadiusRestApi extends WebPage
 		 * 2 - combined AP MAC and SSID
 		 * 3 - Client MAC
 		 */
+		Log.trace(LogCategory.RADIUS, "URI: " + request.uri());
+
 		String arg1 = request.splat()[1];
 		request.attribute(REQUEST_USER_NAME, arg1);
 		// if mac address is given, try to get username by mac address
 		if (MAC_ADDRESS_PATTERN.matcher(arg1).matches()){
+			Log.trace(LogCategory.RADIUS, "-> MAC address detected: " + arg1);
 			Optional<User> user = Optional.empty();
 			try {
 				user = Optional.ofNullable(getDb().getUserByMacAddress(new MacAddress(arg1)));
 			} catch (IllegalArgumentException e) {
 				Log.warn("Invalid MAC address: " + arg1);
 			}
-			user.map(User::getRoomAssignment)
-					.ifPresent(roomAssignment -> request.attribute(REQUEST_USER_NAME, roomAssignment));
+			Log.trace(LogCategory.RADIUS, "-> User: " + user.map(User::getFullName).orElse("Not Found"));
+			user.map(User::getRoomAssignment).ifPresent(roomAssignment -> {
+					Log.trace(LogCategory.RADIUS, "-> Room: " + roomAssignment.getRoom().getRoomNumber());
+					request.attribute(REQUEST_USER_NAME, roomAssignment.getRoom().getRoomNumber());
+				});
 		}
 
-		Log.trace(LogCategory.RADIUS, "URI: " + request.uri());
-		Log.trace(LogCategory.RADIUS, "-> Username: " + (String) request.attribute(REQUEST_USER_NAME));
+		Log.trace(LogCategory.RADIUS, "-> Username: " + request.attribute(REQUEST_USER_NAME));
 		// If the request includes the AP and client MAC, decode those too
 		if(request.splat().length >= 4) {
 			/**
